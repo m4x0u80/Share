@@ -44,7 +44,7 @@ class BaseController extends AbstractController
     }
 
     #[Route('/categorie', name: 'app_categorie')]
-    public function categorie(Request $request) : Response
+    public function categorie(Request $request, EntityManagerInterface $em) : Response
     {
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
@@ -52,6 +52,8 @@ class BaseController extends AbstractController
         if($request->isMethod('POST')){
             $form->handleRequest($request);
             if ($form->isSubmitted()&&$form->isValid()){
+                $em->persist($categorie);
+                $em->flush();
                 $this->addFlash('notice','Message envoyé');
                 return $this->redirectToRoute('app_categorie');
             }
