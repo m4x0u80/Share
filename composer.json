@@ -18,8 +18,11 @@
         "symfony/flex": "^2",
         "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/mime": "6.4.*",
         "symfony/runtime": "6.4.*",
+        "symfony/security-bundle": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
+        "symfony/validator": "6.4.*",
         "symfony/yaml": "6.4.*"
     },
     "require-dev": {
@@ -75,6 +78,4 @@
             "require": "6.4.*"
         }
     }
-    
-
 }
