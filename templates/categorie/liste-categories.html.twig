@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 {% block title %}
-	{{parent()}}Liste des catégories
+	{{parent()}}Liste des catégories (A-Z)
 {% endblock %}
 {% block body %}
 	<div class="container-fluid">
 		<h1 class="text-center text-primary mt-4 pt-4 display-1 fw-bold">
 			Liste des catégories</h1>
 		<div class="row justify-content-center">
-			<div class="col-12 col-md-8 bg-white p-4 m-0 text-primary">
+			<div class="col-12 col-md-8 bg-white p-4 m-0 text-primary text-center">
 				<div class="table-responsive">
-				{{ form_start(form) }}
+					{{ form_start(form) }}
 					<table class="table table-hover">
 						<thead>
 							<tr class="fw-bold text-primary">
@@ -20,9 +20,31 @@
 							</tr>
 						</thead>
 						<tbody>
-							{% for categorie in categories | sort((a, b) => a.libelle <=> b.libelle) %}
+							{% for categorie in categories |sort((a, b) => a.libelle <=> b.libelle) %}
 								<tr class="{{ cycle(['table-primary', 'table-secondary'], loop.index0) }}">
-									<td>{{ categorie.libelle | capitalize }}</td>
+									<td class="text-start">{{ categorie.libelle | capitalize }}
+										{% if categorie.scategories | length > 0 %}
+											<ul>
+												{% for sc in categorie.scategories |sort((a, b) => a.numero <=> b.numero) %}
+													<li>{{sc.numero}}
+														-
+														{{sc.libelle | capitalize }}<a href="{{path("app_modifier_sous_categorie",{'id':sc.id})}}">
+															<i class="bi bi-pen-fill text-dark"></i>
+														</a>
+
+
+														<a href="{{path("app_supprimer_sous_categorie",{'id':sc.id})}}">
+															<i class="bi bi-trash-fill text-dark"></i>
+														</a>
+													</li>
+												{% endfor %}
+
+
+											</ul>
+
+										{% endif %}
+									</td>
+
 									<td>
 										<a href="{{path("app_modifier_categorie",{'id':categorie.id})}}">
 											<i class="bi bi-pen-fill text-dark"></i>
@@ -30,20 +52,16 @@
 									</td>
 									<td>
 										<a href="{{path("app_supprimer_categorie",{'id':categorie.id})}}">
-											<i class="bi bi-trash-fill textdark"></i>
+											<i class="bi bi-trash-fill text-dark"></i>
 										</a>
 									</td>
-									<td>
-									{{ form_widget(form.categories[categorie.id]) }}</td>
-
+									<td>{{ form_widget(form.categories[categorie.id]) }}</td>
 								</tr>
 							{% endfor %}
 						</tbody>
 					</table>
-
-
-				{{ form_widget(form.supprimer) }}
-				{{ form_end(form) }}
+					{{ form_widget(form.supprimer) }}
+					{{ form_end(form) }}
 				</div>
 			</div>
 		</div>
