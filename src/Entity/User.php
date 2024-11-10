@@ -24,22 +24,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $inscriptionDate = null;
 
-    #[ORM\Column(length : 100)]
+    #[ORM\Column(length: 100)]
     private ?string $name = null;
 
     #[ORM\Column(length: 100)]
@@ -47,21 +41,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'demander')]
     private Collection $usersDemande;
-    #[ORM\JoinTable(name: "user_demande")]
-    #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    #[InverseJoinColumn(name: 'demander_id', referencedColumnName: 'id')]
-    #[ORM\ManyToMany(targetEntity: 'User', inversedBy: 'demander')]
-    private Collection $demander;
 
-    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'userAccepte')]
-    
-    #[ORM\JoinTable(name: "user_accepter",
-        joinColumns: [new ORM\JoinColumn(name: "user_id", referencedColumnName: "id")],
-        inverseJoinColumns: [new ORM\JoinColumn(name: "accepter_id", referencedColumnName:"id")])]
-    private Collection $accepter;
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'usersDemande')]
+    #[ORM\JoinTable(name: "user_demande")]
+    private Collection $demander;
 
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'accepter')]
     private Collection $userAccepte;
+
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'userAccepte')]
+    #[ORM\JoinTable(
+        name: "user_accepter",
+        joinColumns: [new ORM\JoinColumn(name: "user_id", referencedColumnName: "id")],
+        inverseJoinColumns: [new ORM\JoinColumn(name: "accepter_id", referencedColumnName: "id")]
+    )]
+    private Collection $accepter;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Fichier::class)]
+    private Collection $fichiers;
 
     public function __construct()
     {
@@ -85,47 +82,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     *
-     * @return list<string>
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -134,17 +111,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Effacer les données sensibles temporaires si nécessaires
     }
 
     public function getInscriptionDate(): ?\DateTimeInterface
@@ -155,7 +127,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setInscriptionDate(\DateTimeInterface $inscriptionDate): static
     {
         $this->inscriptionDate = $inscriptionDate;
-
         return $this;
     }
 
@@ -167,7 +138,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -179,13 +149,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Fichier>
-     */
     public function getFichiers(): Collection
     {
         return $this->fichiers;
@@ -197,25 +163,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->fichiers->add($fichier);
             $fichier->setUser($this);
         }
-
         return $this;
     }
 
     public function removeFichier(Fichier $fichier): static
     {
-        if ($this->fichiers->removeElement($fichier)) {
-            // set the owning side to null (unless already changed)
-            if ($fichier->getUser() === $this) {
-                $fichier->setUser(null);
-            }
+        if ($this->fichiers->removeElement($fichier) && $fichier->getUser() === $this) {
+            $fichier->setUser(null);
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, self>
-     */
     public function getDemander(): Collection
     {
         return $this->demander;
@@ -226,20 +184,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!$this->demander->contains($demander)) {
             $this->demander->add($demander);
         }
-
         return $this;
     }
 
     public function removeDemander(self $demander): static
     {
         $this->demander->removeElement($demander);
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, self>
-     */
     public function getUsersDemande(): Collection
     {
         return $this->usersDemande;
@@ -251,7 +204,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->usersDemande->add($usersDemande);
             $usersDemande->addDemander($this);
         }
-
         return $this;
     }
 
@@ -260,13 +212,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->usersDemande->removeElement($usersDemande)) {
             $usersDemande->removeDemander($this);
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, self>
-     */
     public function getAccepter(): Collection
     {
         return $this->accepter;
@@ -277,20 +225,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!$this->accepter->contains($accepter)) {
             $this->accepter->add($accepter);
         }
-
         return $this;
     }
 
     public function removeAccepter(self $accepter): static
     {
         $this->accepter->removeElement($accepter);
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, self>
-     */
     public function getUserAccepte(): Collection
     {
         return $this->userAccepte;
@@ -302,7 +245,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->userAccepte->add($userAccepte);
             $userAccepte->addAccepter($this);
         }
-
         return $this;
     }
 
@@ -311,7 +253,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->userAccepte->removeElement($userAccepte)) {
             $userAccepte->removeAccepter($this);
         }
-
         return $this;
     }
 }

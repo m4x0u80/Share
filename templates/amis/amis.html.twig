@@ -1,85 +1,84 @@
 {% extends 'base.html.twig' %}
 {% block title %}
-	{{parent()}}
-	Les amis
+    {{parent()}}
+    Les amis
 {% endblock %}
 {% block stylesheets %}
-	{{parent()}}
-	<style>
-		#ajout_ami_email {
-			text-align: center;
-			width: 50%;
-		}
-		.custom-center {
-			display: flex;
-			justify-content: center;
-			margin-bottom: 1rem;
-		}
-	</style>
+    {{parent()}}
+    <style>
+        #ajout_ami_email {
+            text-align: center;
+            width: 50%;
+        }
+        .custom-center {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+    </style>
 {% endblock %}
 {% block body %}
-	<div class="container-fluid">
-		<h1 class="text-center text-primary mt-4 pt-4 fw-bold">
-			Les amis</h1>
-		<div class="row justify-content-center">
-			<div class="col-12 col-md-12 bg-white p-4 m-0 text-primary">
-				{{form_start(form)}}
-				<div class="custom-center">
-					{{form_widget(form.email)}}
-				</div>
-				{{form_end(form)}}
-			</div>
-			<div class="col-6 col-md-6 bg-white p-4 m-0 text-primary text-center" style="border-right: 2px solid #158cba;">
-				<span class="fw-bold text-center">Reçues</span>
-				{% if app.user.usersDemande | length > 0 %}
-					{% for d in app.user.usersDemande %}
-						<div class="list-group m-2">
-							<div class="list-group-item list-group-itemaction bg-secondary" aria-current="true">
-								<div class="d-flex w-100 justifycontent-end">
-									<h5 class="mb-1 textprimary">{{d.email}}</h5>
-									<a href="{{path('app_amis', {'idAccepter':d.id})}}" class="btn btn-success btn-sm me-2 ms-2" tabindex="-1" role="button" aria-disabled="true">Accepter</a>
-									<a href="{{path('app_amis', {'idRefuser':d.id})}}" class="btn btn-success btn-sm" tabindex="-1" role="button" ariadisabled="true">Refuser</a>
-								</div>
-							</div>
-						</div>
-					{% endfor %}
-				{% endif %}
-			</div>
-			<div class="col-6 col-md-6 bg-white p-4 m-0 text-primary text-center">
-				<span class="fw-bold text-center m-4 p-4">Envoyées</span>
-				{% if app.user.demander | length > 0 %}
-					{% for d in app.user.demander %}
-						<div class="list-group m-2">
-							<div class="list-group-item list-group-itemaction bg-secondary" aria-current="true">
-								<div class="d-flex w-100 justifycontent-between">
-									<h5 class="mb-1 textprimary">{{d.email}}</h5>
-									<a href="{{path('app_amis', {'id':d.id})}}" class="btn btn-success btn-sm" tabindex="-1" role="button" ariadisabled="true">Annuler</a>
-								</div>
-							</div>
-						</div>
-					{% endfor %}
-				{% endif %}
-			</div>
-			<div class="col-6 col-md-6 bg-white p-4 m-0 text-primary text-center">
-				<h2 class="fw-bold text-center m-4 p-4">Vos amis</h2>
-				{% if app.user.accepter | length > 0 %}
-					{% for a in app.user.accepter %}
-						<div class="list-group m-2">
-							<div class="list-group-item list-group-itemaction bg-secondary" aria-current="true">
-								<div class="d-flex w-100 justifycontent-between">
-									<span class="mb-1 textprimary">{{a.name | upper}}
-										{{a.prenom | capitalize}}</span>
-									<span>
-									<i class="bi bi-person"></i>
-										<a href="{{path("app_supprimer_amis",{'id':a.id})}}">
-										<i class="bi bi-trash-fill text-dark"></i>
-									</a></span>
-								</div>
-							</div>
-						</div>
-					{% endfor %}
-				{% endif %}
-			</div>
-		</div>
-	</div>
+    <div class="container-fluid">
+        <h1 class="text-center text-primary mt-4 pt-4 fw-bold">Les amis</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-12 bg-white p-4 m-0 text-primary">
+                {{form_start(form)}}
+                <div class="custom-center">
+                    {{form_widget(form.email)}}
+                </div>
+                {{form_end(form)}}
+            </div>
+            <div class="col-6 col-md-6 bg-white p-4 m-0 text-primary text-center" style="border-right: 2px solid #158cba;">
+                <span class="fw-bold text-center">Reçues</span>
+                {% if app.user.usersDemande | length > 0 %}
+                    {% for d in app.user.usersDemande %}
+                        <div class="list-group m-2">
+                            <div class="list-group-item list-group-item-action bg-secondary" aria-current="true">
+                                <div class="d-flex w-100 justify-content-end">
+                                    <h5 class="mb-1 text-primary">{{d.email}}</h5>
+                                    <a href="{{path('app_amis', {'idAccepter':d.id})}}" class="btn btn-success btn-sm me-2 ms-2" tabindex="-1" role="button" aria-disabled="true">Accepter</a>
+                                    <a href="{{path('app_amis', {'idRefuser':d.id})}}" class="btn btn-danger btn-sm" tabindex="-1" role="button" aria-disabled="true">Refuser</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-6 col-md-6 bg-white p-4 m-0 text-primary text-center">
+                <span class="fw-bold text-center m-4 p-4">Envoyées</span>
+                {% if app.user.demander | length > 0 %}
+                    {% for d in app.user.demander %}
+                        <div class="list-group m-2">
+                            <div class="list-group-item list-group-item-action bg-secondary" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 text-primary">{{d.email}}</h5>
+                                    <a href="{{path('app_amis', {'id':d.id})}}" class="btn btn-warning btn-sm" tabindex="-1" role="button" aria-disabled="true">Annuler</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-6 col-md-6 bg-white p-4 m-0 text-primary text-center">
+                <h2 class="fw-bold text-center m-4 p-4">Vos amis</h2>
+                {% if app.user.accepter | length > 0 %}
+                    {% for a in app.user.accepter %}
+                        <div class="list-group m-2">
+                            <div class="list-group-item list-group-item-action bg-secondary" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <span class="mb-1 text-primary">{{a.name | upper}} {{a.prenom | capitalize}}</span>
+                                    <span>
+                                        <i class="bi bi-person"></i>
+                                        <a href="{{path("app_supprimer_amis",{'id':a.id})}}">
+                                            <i class="bi bi-trash-fill text-dark"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
